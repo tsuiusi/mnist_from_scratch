@@ -22,6 +22,21 @@ WX + b
 4. (10, 10)(10, 1) + (10, 1)
 
 softmax + one hot encoding
+
+how do i get the gradients? backprop from the losses
+
+how do i calculate gradients
+
+
+implement:
+    * weight update
+    * backpropagation
+    * loss function
+    * gradient descent
+
+
+second level:
+    * adam optimizer
 """
 
 class Linear():
@@ -39,16 +54,10 @@ class Linear():
 
 
 class MLP():
-    def __init__(
-            self, 
-            no_layers : int,
-            input_dims : int,
-            hidden_dims : int,
-            output_dims : int,
-            ):
-
+    def __init__(self, no_layers : int, input_dims : int, hidden_dims : int, output_dims : int):
         layer_sizes = [input_dims] + [hidden_dims] * no_layers + [output_dims]
         self.layers = [Linear(in_dim, out_dim, bias=True) for in_dim, out_dim in zip(layer_sizes[:-1], layer_sizes[1:])]
+        self.weights = [layer.weights for layer in self.layers]
 
     def __call__(self, x):
         for layer in self.layers[:-1]:
@@ -56,5 +65,19 @@ class MLP():
 
         return self.layers[-1](x)
 
+
+
+class SGD():
+    def __init__(self, learning_rate):
+        self.learning_rate = learning_rate
+
+    def back_relu(x):
+        return x > 0
+
+   
+ 
 def MSE(model, X, y):
    return np.mean(np.square(X - y)) 
+
+def one_hot(x):
+    return np.argmax(x)
