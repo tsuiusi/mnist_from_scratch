@@ -4,6 +4,7 @@ import os
 import sys
 import random
 import math
+import time
 
 from mnist import MLP
 
@@ -42,3 +43,9 @@ seed = 69
 # --- Model and etc ---------------------------------------------------------------------------------------------------- 
 model = MLP(no_layers, input_dims, hidden_dims, output_dims)
 
+def log(epoch, toc, loss):
+    toc = time.perf_counter()
+
+    print(f'Epoch: {epoch} | Time: {(toc - tic):.3f} | Loss: {loss:.3f}')
+
+    return toc

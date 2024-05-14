@@ -82,8 +82,8 @@ class SGD():
 
    
  
-def MSE(model, X, y):
-   return np.mean(np.square(X - y)) 
+    def MSE(model, X, y):
+        return np.mean(np.square(X - y)) 
 
 def one_hot(x):
     zeros_x = np.zeros(x.size, x.max() + 1)
