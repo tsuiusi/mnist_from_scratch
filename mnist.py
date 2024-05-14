@@ -65,6 +65,8 @@ class MLP():
 
         return self.layers[-1](x)
 
+    def update_gradients(grads):
+        pass
 
 
 class SGD():
@@ -80,4 +82,7 @@ def MSE(model, X, y):
    return np.mean(np.square(X - y)) 
 
 def one_hot(x):
-    return np.argmax(x)
+    zeros_x = np.zeros(x.size, x.max() + 1)
+    zeros_x[np.arange(x.size), x] = 1
+
+    return zeros_x.T

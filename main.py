@@ -5,7 +5,7 @@ import sys
 import random
 import math
 
-from mnist import MLP, Linear
+from mnist import MLP
 
 # --- Getting Data -------------------------------------------------------------------------------------------------------
 # Train dataset
@@ -30,7 +30,19 @@ val_labels = val[0]
 test = pd.read_csv(PATH + 'test.csv')
 test = np.array(test)
 
-linear = Linear(784, 10, bias=True)
-model = MLP(3, 784, 10, 10)
+# --- Hyperparameters ----------------------------------------------------------------------------------------------------
+no_epochs = 200
+input_dims = 784
+hidden_dims = 32
+output_dims = 10
+no_layers = 2
+learning_rate = 1e-4
+seed = 69
 
-print(model(train_images).T[0])
+# --- Model and etc ---------------------------------------------------------------------------------------------------- 
+model = MLP(no_layers, input_dims, hidden_dims, output_dims)
+
+"""
+[0.2, 0.2, 0.6]
+[0, 0, 1]
+"""
