@@ -73,7 +73,11 @@ class SGD():
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
 
-    def back_relu(x):
+    def __call__(self, model, X, y):
+        # Forward, Backward, Update gradients
+        results = model(X)
+
+    def back_relu(self, x):
         return x > 0
 
    
@@ -86,3 +90,8 @@ def one_hot(x):
     zeros_x[np.arange(x.size), x] = 1
 
     return zeros_x.T
+
+def get_predictions(model, X):
+    return np.argmax(model(X), 0)
+
+
