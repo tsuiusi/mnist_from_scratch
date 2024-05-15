@@ -70,20 +70,22 @@ class MLP():
 
 
 class SGD():
-    def __init__(self, learning_rate):
+    def __init__(self, learning_rate, data):
         self.learning_rate = learning_rate
+        self.m, _ = data.shape
 
     def __call__(self, model, X, y):
         # Forward, Backward, Update gradients
         results = model(X)
 
     def back_relu(self, x):
-        return x > 0
-
-   
+        return x > 0 
  
     def MSE(model, X, y):
         return np.mean(np.square(X - y)) 
+
+    def backprop(layer, prev_deriv):
+        return 1 / self.m * prev_deriv.dot(layer.T)
 
 def one_hot(x):
     zeros_x = np.zeros(x.size, x.max() + 1)
