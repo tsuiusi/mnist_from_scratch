@@ -96,4 +96,9 @@ def one_hot(x):
 def get_predictions(model, X):
     return np.argmax(model(X), 0)
 
-
+"""
+To do:
+    1. implement backpropagation
+    2. implement sgd
+    3. 
+"""
