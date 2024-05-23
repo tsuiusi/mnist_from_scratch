@@ -19,8 +19,6 @@ class MLP(nn.Module):
 
     def __call__(self, x):
         for layer in self.layers[:-1]:
-            print(x.shape)
-            print(layer)
             x = mx.maximum(layer(x), 0.0)
 
         return self.layers[-1](x)
@@ -59,14 +57,14 @@ def main():
     # Getting data
     PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mnist/')
 
-    train = mx.array(np.array(pd.read_csv(PATH + 'train.csv')).T)
+    train = mx.transpose(mx.array(np.array(pd.read_csv(PATH + 'train.csv'))))
     n, m = train.shape
-    train_images = train[1:n] / 255.
-    train_labels = train[0]
+    train_images = mx.transpose(train[1:n] / 255.) # get image, normalize
+    train_labels = train[0] # get labels
 
-    test = mx.array(np.array(pd.read_csv(PATH + 'test.csv')).T)
+    test = mx.transpose(mx.array(np.array(pd.read_csv(PATH + 'test.csv'))))
     i, h = test.shape
-    test_images = test[1:i] / 255.
+    test_images = mx.transpose(test[1:i] / 255.)
     test_labels = test[0]
 
     # Load model
