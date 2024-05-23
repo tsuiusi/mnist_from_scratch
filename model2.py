@@ -19,6 +19,8 @@ class MLP(nn.Module):
 
     def __call__(self, x):
         for layer in self.layers[:-1]:
+            print(x.shape)
+            print(layer)
             x = mx.maximum(layer(x), 0.0)
 
         return self.layers[-1](x)

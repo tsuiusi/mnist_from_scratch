@@ -10,5 +10,11 @@ PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mnist/')
 train = np.array(pd.read_csv(PATH + 'train.csv'))
 print(train)
 print(type(train))
-test = np.array(pd.read_csv(PATH + 'test.csv'))
-print(test.shape)
+print(mx.array(train))
+train = mx.transpose(mx.array(train))
+
+train_images = mx.transpose(train[1:] / 255.)
+train_labels = train[0]
+
+print(train_images[0])
+print(train_images.shape)
