@@ -77,6 +77,8 @@ class Optimizer():
         deriv_w = []
         deriv_b = []
 
+        print(X.shape)
+
         pred = model(X)
         delta = np.argmax(pred, axis=0) - y 
         loss = np.mean(delta ** 2)
@@ -84,6 +86,12 @@ class Optimizer():
         for layer in model.layers[::-1]:
             deriv_w.append(1/ m * delta.dot(layer.input))
             deriv_b.append(1 / m * np.sum(delta, axis=0)) # not sure about the axis on this one 
+            """
+            issues:
+            * dimensions with the backpropagation
+            * forward pass seems to be fine now, but i'm not sure about the weights
+            * is this the right normalization constant?
+            """
 
             if layer != model.layers[0]:
                 if hasattr(layer, 'relu_deriv'):
