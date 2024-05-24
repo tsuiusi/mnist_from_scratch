@@ -49,3 +49,6 @@ def log(epoch, toc, loss):
     print(f'Epoch: {epoch} | Time: {(toc - tic):.3f} | Loss: {loss:.3f}')
 
     return toc
+
+for i in range(no_epochs):
+    SGD(model, learning_rate, train_images, train_labels)
