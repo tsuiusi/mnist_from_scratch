@@ -45,7 +45,7 @@ class Linear():
         if bias:
             self.bias = np.random.rand(output_dims, 1)
 
-        self.shape = self.weights.shape
+        self.shape = self.weight.shape
 
     def __call__(self, x):
         self.input = x
@@ -67,23 +67,23 @@ class MLP():
 
         return self.layers[-1](x)
 
-class Step():
-    def __init__(self, learning_rate, data):
+class Optimizer():
+    def __init__(self, learning_rate):
         self.learning_rate = learning_rate
-        self.m, _ = data.shape
 
     def __call__(self, model, X, y):
         # Forward, Backward, Update gradients
+        m, _ = X.shape
         deriv_w = []
         deriv_b = []
 
         pred = model(X)
-        delta = np.argmax(pred, axis=1) - y 
+        delta = np.argmax(pred, axis=0) - y 
         loss = np.mean(delta ** 2)
 
         for layer in model.layers[::-1]:
-            deriv_w.append(1/ self.m * delta.T.dot(layer.input))
-            deriv_b.append(1 / self.m * np.sum(delta, axis=0)) # not sure about the axis on this one 
+            deriv_w.append(1/ m * delta.dot(layer.input))
+            deriv_b.append(1 / m * np.sum(delta, axis=0)) # not sure about the axis on this one 
 
             if layer != model.layers[0]:
                 if hasattr(layer, 'relu_deriv'):
@@ -92,6 +92,8 @@ class Step():
                     delta = delta.dot(layer.weight.T)
 
         update_gradients(model, deriv_w, deriv_b)
+
+        return loss
 
     def update_gradients(self, model, deriv_w, deriv_b):
         # remember to reverse the order of gradients when returning them from backprop since it's a stack-type event

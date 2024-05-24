@@ -16,6 +16,8 @@ class MLP(nn.Module):
         super().__init__()
         layer_sizes = [input_dims] + [hidden_dims] * no_layers + [output_dims]
         self.layers = [nn.Linear(in_dims, out_dims) for in_dims, out_dims in zip(layer_sizes[:-1], layer_sizes[1:])]
+        print(layer_sizes)
+        print(self.layers)
 
     def __call__(self, x):
         for layer in self.layers[:-1]:
@@ -59,12 +61,12 @@ def main():
 
     train = mx.transpose(mx.array(np.array(pd.read_csv(PATH + 'train.csv'))))
     n, m = train.shape
-    train_images = mx.transpose(train[1:n] / 255.) # get image, normalize
+    train_images = mx.transpose(train[1:n] / 255.) # (600000, 784)
     train_labels = train[0] # get labels
 
     test = mx.transpose(mx.array(np.array(pd.read_csv(PATH + 'test.csv'))))
     i, h = test.shape
-    test_images = mx.transpose(test[1:i] / 255.)
+    test_images = mx.transpose(test[1:i] / 255.) # (10000, 784)
     test_labels = test[0]
 
     # Load model
