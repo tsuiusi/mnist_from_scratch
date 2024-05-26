@@ -21,20 +21,6 @@ WX + b
 3. (10 ,10)(10, 1) + (10, 1)
 4. (10, 10)(10, 1) + (10, 1)
 
-softmax + one hot encoding
-
-how do i get the gradients? backprop from the losses
-
-how do i calculate gradients
-
-
-implement:
-    * weight update
-    * backpropagation
-    * loss function
-    * gradient descent
-
-
 second level:
     * adam optimizer
 """
@@ -78,7 +64,6 @@ class Optimizer():
         self.learning_rate = learning_rate
 
     def update_gradients(self, model, deriv_w, deriv_b):
-        # remember to reverse the order of gradients when returning them from backprop since it's a stack-type event
         for layer, weight_grads, bias_grads in zip(model.layers[::-1], deriv_w, deriv_b):
             assert layer.weight.shape == weight_grads.shape
             layer.weight -= self.learning_rate * weight_grads
