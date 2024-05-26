@@ -11,6 +11,7 @@ from model import MLP, Optimizer
 # --- Getting Data -------------------------------------------------------------------------------------------------------
 # Train dataset
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mnist/')
+print(PATH)
 
 train = np.transpose(np.array(np.array(pd.read_csv(PATH + 'train.csv'))))
 n, m = train.shape
@@ -55,4 +56,6 @@ for i in range(no_epochs):
     for X, y in batch_iterate(batch_size, train_images, train_labels):
         loss = optimizer(model, X.T, y)
 
-    tic = log(i, tic, loss)
+    accuracy = eval_fn(model, test_images.T, test_labels)
+
+    tic = log(i, tic, accuracy)

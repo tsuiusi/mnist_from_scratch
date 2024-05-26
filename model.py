@@ -41,7 +41,7 @@ second level:
 
 class Linear():
     def __init__(self, input_dims, output_dims, bias=False):
-        self.weight = np.random.rand(output_dims, input_dims)   
+        self.weight = np.random.rand(output_dims, input_dims) - 0.5 
         if bias:
             self.bias = np.random.rand(output_dims, 1)
 
@@ -101,7 +101,7 @@ class Optimizer():
 
         for layer, layer_output in zip(model.layers[::-1], model.layer_outputs[1::-1]):
             deriv_w.append(1/m * delta.dot(layer.input.T))
-            deriv_b.append(1/m * np.sum(delta, axis=1))
+            deriv_b.append(1/m * np.sum(delta, axis=1, keepdims=True))
 
             if layer != model.layers[0]:
                 if hasattr(layer, 'relu_deriv'):
