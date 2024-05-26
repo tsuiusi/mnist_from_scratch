@@ -29,7 +29,7 @@ hidden_dims = 32
 output_dims = 10
 no_layers = 2
 batch_size = 256
-learning_rate = 1e-1
+learning_rate = 1e-4
 seed = 69
 
 # --- Model and etc ---------------------------------------------------------------------------------------------------- 
