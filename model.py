@@ -64,12 +64,27 @@ class MLP():
     def __call__(self, x):
         for layer in self.layers[:-1]:
            x = np.maximum(0.0, layer(x))
+        
+        return self.normalize(self.layers[-1](x).T)
 
-        return self.layers[-1](x)
+    def normalize(self, x):
+        return x / np.sqrt(np.sum(np.square(x)))
 
 class Optimizer():
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
+
+    def update_gradients(self, model, deriv_w, deriv_b):
+        # remember to reverse the order of gradients when returning them from backprop since it's a stack-type event
+        for layer, weight_grads, bias_grads in zip(model.layers[::-1], deriv_w, deriv_b):
+            assert layer.weight.shape == weight_grads.T.shape
+            layer.weight += self.learning_rate * weight_grads.T
+            layer.bias += self.learning_rate * bias_grads.reshape(layer.bias.shape)
+
+    def one_hot(self, y):
+        ohy = np.zeros((y.size, y.max() + 1))
+        ohy[np.arange(y.size), y] = 1
+        return ohy
 
     def __call__(self, model, X, y):
         # Forward, Backward, Update gradients
@@ -77,36 +92,28 @@ class Optimizer():
         deriv_w = []
         deriv_b = []
 
-        print(X.shape)
-
         pred = model(X)
-        delta = np.argmax(pred, axis=0) - y 
+        delta = np.argmax(pred, axis=0) - self.one_hot(y)
         loss = np.mean(delta ** 2)
 
         for layer in model.layers[::-1]:
-            deriv_w.append(1/ m * delta.dot(layer.input))
+            deriv_w.append(1/ m * layer.input.dot(delta))
             deriv_b.append(1 / m * np.sum(delta, axis=0)) # not sure about the axis on this one 
+
             """
             issues:
-            * dimensions with the backpropagation
             * forward pass seems to be fine now, but i'm not sure about the weights
-            * is this the right normalization constant?
+            * is this the right normalization constant? currently it's (784, 256) which is weird.
             """
 
             if layer != model.layers[0]:
                 if hasattr(layer, 'relu_deriv'):
-                    delta = delta.dot(layer.weight.T) * layer.relu_deriv(layer.input)
+                    delta = delta.dot(layer.weight) * layer.relu_deriv(layer.input).T
                 else:
-                    delta = delta.dot(layer.weight.T)
+                    delta = delta.dot(layer.weight)
 
-        update_gradients(model, deriv_w, deriv_b)
+        self.update_gradients(model, deriv_w, deriv_b)
 
         return loss
 
-    def update_gradients(self, model, deriv_w, deriv_b):
-        # remember to reverse the order of gradients when returning them from backprop since it's a stack-type event
-        for layer, weight_grads, bias_grads in zip(model.layers, deriv_w, deriv_b):
-            assert layer.weight.shape == weight_grads.shape
-            layer.weight += self.learning_rate * weight_grads
-            layer.bias += self.learning_rate * bias_grads
             
