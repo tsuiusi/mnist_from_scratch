@@ -60,10 +60,13 @@ class MLP():
         self.layers = [Linear(in_dim, out_dim, bias=True) for in_dim, out_dim in zip(layer_sizes[:-1], layer_sizes[1:])]
         self.weights = [layer.weight for layer in self.layers]
         self.biases = [layer.bias for layer in self.layers] 
+        self.layer_outputs = []
 
     def __call__(self, x):
+        self.layer_outputs = []
         for layer in self.layers[:-1]:
            x = np.maximum(0.0, layer(x))
+           self.layer_outputs.append(x)
         
         return self.normalize(self.layers[-1](x).T)
 
@@ -77,8 +80,8 @@ class Optimizer():
     def update_gradients(self, model, deriv_w, deriv_b):
         # remember to reverse the order of gradients when returning them from backprop since it's a stack-type event
         for layer, weight_grads, bias_grads in zip(model.layers[::-1], deriv_w, deriv_b):
-            assert layer.weight.shape == weight_grads.T.shape
-            layer.weight -= self.learning_rate * weight_grads.T
+            assert layer.weight.shape == weight_grads.shape
+            layer.weight -= self.learning_rate * weight_grads
             layer.bias -= self.learning_rate * bias_grads.reshape(layer.bias.shape)
 
     def one_hot(self, y):
@@ -93,22 +96,20 @@ class Optimizer():
         deriv_b = []
 
         pred = model(X)
-        delta = pred - self.one_hot(y)
+        delta = (pred - self.one_hot(y)).T
         loss = np.mean(delta ** 2)
 
-        for layer in model.layers[::-1]:
-#             print(sum(1/m * layer.input.dot(delta)))
-            deriv_w.append(1/m * layer.input.dot(delta))
-            deriv_b.append(1/m * np.sum(delta, axis=0))
+        for layer, layer_output in zip(model.layers[::-1], model.layer_outputs[1::-1]):
+            deriv_w.append(1/m * delta.dot(layer.input.T))
+            deriv_b.append(1/m * np.sum(delta, axis=1))
 
             if layer != model.layers[0]:
                 if hasattr(layer, 'relu_deriv'):
-                    delta = delta.dot(layer.weight) * layer.relu_deriv(layer.input).T
+                    delta = layer.weight.T.dot(delta) * layer.relu_deriv(layer_output)
                 else:
                     delta = delta.dot(layer.weight)
 
         self.update_gradients(model, deriv_w, deriv_b)
-
         return loss
 
             
